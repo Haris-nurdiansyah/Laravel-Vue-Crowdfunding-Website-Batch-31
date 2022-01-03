@@ -6,7 +6,7 @@ trait hewan {
     public $jumlah_kaki;
     public $keahlian;
 
-    public function abstraksi()
+    public function atraksi()
     {
         return $this->nama . " sedang " . $this->keahlian;
     }
@@ -23,7 +23,8 @@ trait fight {
     }
     public function diserang($penyerang)
     {
-        return $this->darah = $this->darah - ($penyerang->attackPower / $this->defencePower);
+        $this->darah = $this->darah - ($penyerang->attackPower / $this->defencePower);
+        echo $this->nama . " sedang diserang " . $penyerang->nama . "<br/>";
     }
 }
 
@@ -90,7 +91,7 @@ class Elang {
 $harimau1 = new Harimau('Harimau 1');
 $elang1 = new Elang('Elang 1');
 
-echo $harimau1->abstraksi();
+echo $harimau1->atraksi();
 echo "</br>";
 echo $elang1->serang($harimau1);
 echo "</br>";
@@ -98,7 +99,7 @@ echo $elang1->getInfoHewan();
 
 echo "<br/>";
 
-echo $elang1->abstraksi();
+echo $elang1->atraksi();
 echo "</br>";
 echo $harimau1->serang($elang1);
 echo "</br>";
