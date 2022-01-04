@@ -33,8 +33,9 @@ class CreatePasswordResetsTable extends Migration
 
 // App\Role::create(['name' => 'admin']);
 // App\User::create([
-//     "name" => "Dini Aulia",
-//     "username" => "dini15",
-//     "email" => "dini@gmail.com",
-//     "role_id" => "bff332bd-0a00-4891-b09d-530d4fd2245a"
+//     "name" => "Haris Nurdiansyah",
+//     "username" => "haris15",
+//     "email" => "haris00santos@@gmail.com",
+//     "role_id" => "132e9235-8e35-437f-9f50-474ac0086d96"
 // ]);
+// 137fa50a-bb72-4c9a-8beb-a92729a593da
