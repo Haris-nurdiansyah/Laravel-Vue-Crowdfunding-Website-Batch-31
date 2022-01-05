@@ -17,7 +17,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'username', 'role_id',
+        'name', 'password', 'email', 'username', 'role_id',
     ];
     protected $primaryKey = 'id';
     protected $keyType = 'string';
@@ -33,11 +33,30 @@ class User extends Authenticatable
                 $model->{$model->getKeyName()} = Str::uuid();
             }
         });
+
+        static::creating(function ($model)
+        {
+            $user_role = Role::where('name', 'user')->first();
+            $model->role_id = $user_role->id;
+        });
     }
 
     public function role()
     {
         return $this->belongsTo(Role::class);
+    }
+
+    public function ote_code()
+    {
+        return $this->hasOne(OtpCode::class);
+    }
+
+    public function isAdmin()
+    {
+        if ($this->role->name === "admin") {
+            return true;
+        }
+        return false;
     }
 
     // /**
