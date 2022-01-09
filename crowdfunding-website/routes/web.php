@@ -17,12 +17,12 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Auth::routes();
+// Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+// Route::get('/home', 'HomeController@index')->name('home');
 
-Route::get('/route-1', 'TestController@route_1')->middleware(['auth', 'email_verify']);
+// Route::get('/route-1', 'TestController@route_1')->middleware(['auth', 'email_verify']);
 
-Route::middleware(['auth', 'email_verify', 'cek_role'])->group(function () {
-    Route::get('/route-2', 'TestController@route_2');
-});
+// Route::middleware(['auth', 'email_verify', 'cek_role'])->group(function () {
+//     Route::get('/route-2', 'TestController@route_2');
+// });
