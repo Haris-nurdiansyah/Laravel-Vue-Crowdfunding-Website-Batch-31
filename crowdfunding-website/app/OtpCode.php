@@ -2,27 +2,16 @@
 
 namespace App;
 
+use App\Traits\UsesUUID;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 class OtpCode extends Model
 {
-    protected $fillable = ['otp', 'user_id'];
+    use UsesUUID;
+
+    protected $fillable = ['otp', 'user_id', 'valid_until'];
     protected $primaryKey = 'id';
-    protected $keyType = 'string';
-    public $incrementing = false;
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($model)
-        {
-            if (empty($model->{$model->getKeyName})) {
-                $model->{$model->getKeyName()} = Str::uuid();
-            }
-        });
-    }
 
     public function user()
     {

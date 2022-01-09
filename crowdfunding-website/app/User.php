@@ -2,12 +2,14 @@
 
 namespace App;
 
+use App\Traits\UsesUUID;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Authenticatable
+class User extends Authenticatable implements JWTSubject
 {
     use Notifiable;
 
@@ -17,22 +19,33 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'password', 'email', 'username', 'role_id',
+        'name', 'password', 'email', 'role_id', 'foto_profile'
     ];
     protected $primaryKey = 'id';
-    protected $keyType = 'string';
-    public $incrementing = false;
+    // protected $keyType = 'string';
+    // public $incrementing = false;
+
+    // protected static function boot()
+    // {
+    //     parent::boot();
+
+    //     static::creating(function ($model)
+    //     {
+    //         if (empty($model->{$model->getKeyName})) {
+    //             $model->{$model->getKeyName()} = Str::uuid();
+    //         }
+    //     });
+
+    //     static::creating(function ($model)
+    //     {
+    //         $user_role = Role::where('name', 'user')->first();
+    //         $model->role_id = $user_role->id;
+    //     });
+    // }
 
     protected static function boot()
     {
         parent::boot();
-
-        static::creating(function ($model)
-        {
-            if (empty($model->{$model->getKeyName})) {
-                $model->{$model->getKeyName()} = Str::uuid();
-            }
-        });
 
         static::creating(function ($model)
         {
@@ -46,7 +59,7 @@ class User extends Authenticatable
         return $this->belongsTo(Role::class);
     }
 
-    public function ote_code()
+    public function otp_code()
     {
         return $this->hasOne(OtpCode::class);
     }
@@ -58,6 +71,13 @@ class User extends Authenticatable
         }
         return false;
     }
+
+    // public function get_role_user_id()
+    // {
+    //     $role = Role::where('name', 'user')->first();
+
+    //     return $role->id;
+    // }
 
     // /**
     //  * The attributes that should be hidden for arrays.
@@ -73,7 +93,22 @@ class User extends Authenticatable
     //  *
     //  * @var array
     //  */
-    // protected $casts = [
-    //     'email_verified_at' => 'datetime',
-    // ];
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+    ];
+
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    /**
+     * Return a key value array, containing any custom claims to be added to the JWT.
+     *
+     * @return array
+     */
+    public function getJWTCustomClaims()
+    {
+        return [];
+    }
 }
