@@ -25,13 +25,13 @@ class LoginController extends Controller
             ], 401);
         }
 
+        $data['token'] = $token;
+        $data['user'] = Auth::guard('api')->user();
+
         return response()->json([
             'response_code' => '00',
             'response_message' => 'Login successfully !',
-            'data' => [
-                'token' => $token,
-                'user' => auth()->guard('api')->user()
-            ],
+            'data' => $data     
         ]);
     }
 }

@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers\Api\Auth;
 
+use App\Events\RegenerateOtpCodeEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use App\Http\Responses\ResponseUser;
+use App\Notifications\RegenerateOtpCodeNotification;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 
 class RegenerateOtpCode extends Controller
 {
@@ -39,10 +42,9 @@ class RegenerateOtpCode extends Controller
             ], 400);
         }
 
-        $user->otp_code()->update([
-            'otp' => random_int(100000, 999999),
-            'valid_until' => Carbon::now()->addMinutes(5)
-        ]);
+        $user->generate_otp_code();
+
+        event(new RegenerateOtpCodeEvent($user));
 
         return ResponseUser::getResponse('Please check youre email for verification !', $user);
 

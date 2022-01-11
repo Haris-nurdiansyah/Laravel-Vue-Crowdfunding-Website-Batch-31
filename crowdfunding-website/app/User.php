@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Traits\UsesUUID;
+use Carbon\Carbon;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -52,6 +53,11 @@ class User extends Authenticatable implements JWTSubject
             $user_role = Role::where('name', 'user')->first();
             $model->role_id = $user_role->id;
         });
+
+        static::created(function ($model)
+        {
+            $model->generate_otp_code();
+        });
     }
 
     public function role()
@@ -70,6 +76,21 @@ class User extends Authenticatable implements JWTSubject
             return true;
         }
         return false;
+    }
+
+    public function generate_otp_code()
+    {
+        do {
+            $random = random_int(100000, 999999);
+            $check = OtpCode::where('otp', $random)->first();
+        } while ($check);
+
+        $now = Carbon::now();
+
+        $otp_code = OtpCode::updateOrCreate(
+            ['user_id' => $this->id],
+            ['otp' => $random, 'valid_until' => $now->addMinutes(5)]
+        );
     }
 
     // public function get_role_user_id()
