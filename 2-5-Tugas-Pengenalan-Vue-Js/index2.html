@@ -30,15 +30,15 @@
         a : 0,
         jml_input: 0,
       },
-      computed : {
-          rata_rata: function () {
-            if (this.a >= 10) {
-                return this.rata_rata = this.a / this.jml_input;
-            }else {
-                return 0;
-            }
-          }
-      },
+      // computed : {
+      //     rata_rata: function () {
+      //       if (this.a >= 10) {
+      //           return this.rata_rata = this.a / this.jml_input;
+      //       }else {
+      //           return 0;
+      //       }
+      //     }
+      // },
       methods : {
           openForm : function () {
               this.a = this.a + parseInt(prompt('Masukan nilai a'));
