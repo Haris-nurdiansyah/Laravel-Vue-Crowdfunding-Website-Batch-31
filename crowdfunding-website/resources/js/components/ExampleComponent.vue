@@ -6,7 +6,7 @@
                     <div class="card-header">Example Component</div>
 
                     <div class="card-body">
-                        I'm an example component.
+                        Componnet vue pertama di laravel, Ajnay Kenern Bettt
                     </div>
                 </div>
             </div>

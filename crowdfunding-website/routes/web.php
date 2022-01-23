@@ -13,10 +13,6 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
 // Auth::routes();
 
 // Route::get('/home', 'HomeController@index')->name('home');
@@ -26,3 +22,5 @@ Route::get('/', function () {
 // Route::middleware(['auth', 'email_verify', 'cek_role'])->group(function () {
 //     Route::get('/route-2', 'TestController@route_2');
 // });
+
+Route::view('/{any?}', 'app')->where('any', '.*');
