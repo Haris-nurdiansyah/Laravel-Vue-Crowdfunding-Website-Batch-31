@@ -68,7 +68,6 @@
                 .then(response => {
                     let { data } = response.data
                     this.blogs = data.blogs
-                    console.log(this.blogs);
                 })
                 .catch(err => {
                     let { response } = err;

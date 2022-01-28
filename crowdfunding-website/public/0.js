@@ -39,11 +39,15 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'campaign-item',
   props: ['campaign'],
   computed: {
-    progres: function progres() {
+    progress: function progress() {
       return this.campaign.collected / this.campaign.required * 100;
     }
   }
@@ -77,7 +81,7 @@ var render = function () {
             "v-img",
             {
               staticClass: "white--text",
-              staticStyle: {},
+              staticStyle: { height: "calc(8rem + 11vw)" },
               attrs: { src: _vm.campaign.image },
             },
             [
@@ -93,13 +97,26 @@ var render = function () {
             "v-card-actions",
             [
               _c("v-progress-linear", {
-                attrs: { color: "blue-gray", height: "7" },
-                model: {
-                  value: _vm.progres,
-                  callback: function ($$v) {
-                    _vm.progres = $$v
+                attrs: { height: "20", color: "blue-grey", striped: "" },
+                scopedSlots: _vm._u([
+                  {
+                    key: "default",
+                    fn: function (ref) {
+                      var value = ref.value
+                      return [
+                        _c("strong", { staticClass: "white--text" }, [
+                          _vm._v(_vm._s(Math.ceil(value)) + "%"),
+                        ]),
+                      ]
+                    },
                   },
-                  expression: "progres",
+                ]),
+                model: {
+                  value: _vm.progress,
+                  callback: function ($$v) {
+                    _vm.progress = $$v
+                  },
+                  expression: "progress",
                 },
               }),
             ],
@@ -121,7 +138,9 @@ var render = function () {
               _vm._v(" "),
               _c("v-spacer"),
               _vm._v(" "),
-              _c("span", [_vm._v(" " + _vm._s(_vm.progres) + " ")]),
+              _c("span", [
+                _vm._v(" " + _vm._s(Math.ceil(_vm.progress)) + "% "),
+              ]),
             ],
             1
           ),

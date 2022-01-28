@@ -27,11 +27,12 @@ class LoginController extends Controller
 
         $data['token'] = $token;
         $data['user'] = Auth::guard('api')->user();
+        $data['user']->foto_profile = '/storage/users/photo-profile/'. $data['user']->foto_profile;
 
         return response()->json([
             'response_code' => '00',
             'response_message' => 'Login successfully !',
-            'data' => $data     
+            'data' => $data
         ]);
     }
 }

@@ -1,23 +1,42 @@
 <template>
     <v-app>
+        <alert></alert>
+
+        <keep-alive>
+            <v-dialog
+                v-model="dialog"
+                fullscreen
+                hide-overlay
+                persistent
+                transition="dialog-bottom-transition">
+                <!-- <search @closed="closeDialog" /> -->
+                <component
+                    :is="currentComponent"
+                    @closed="setDialogStatus"
+                    @registered="handleRegisterd"
+                    ></component>
+            </v-dialog>
+        </keep-alive>
+
         <v-navigation-drawer app v-model="drawer">
 
             <v-list>
                 <v-list-item v-if="!guest">
                     <v-list-item-avatar>
-                        <v-img src="https://randomuser.me/api/portraits/men/78.jpg"></v-img>
+                        <!-- https://randomuser.me/api/portraits/men/78.jpg -->
+                        <v-img :src="user.user.foto_profile ? user.user.foto_profile : 'https://randomuser.me/api/portraits/men/78.jpg'"></v-img>
                     </v-list-item-avatar>
                     <v-list-item-content>
-                        <v-list-item-title>Haris Nurdiansyah</v-list-item-title>
+                        <v-list-item-title>{{ user.user.name }}</v-list-item-title>
                     </v-list-item-content>
                 </v-list-item>
 
                 <div class="pa-2" v-if="guest">
-                    <v-btn block color="primary" class="mb-1">
+                    <v-btn block dark color="grey darken-4" class="mb-1" @click="setDialogComponent('login')">
                         <v-icon left>mdi-lock</v-icon>
                         Login
                     </v-btn>
-                    <v-btn block color="success">
+                    <v-btn block dark color="grey" @click="setDialogComponent('register')">
                         <v-icon left>mdi-account</v-icon>
                         Register
                     </v-btn>
@@ -43,7 +62,7 @@
 
             <template v-slot:append v-if="!guest">
                 <div class="pa-2">
-                    <v-btn block color="red" dark>
+                    <v-btn block color="red" dark @click="logout">
                         <v-icon left>mdi-lock</v-icon>
                         Logout
                     </v-btn>
@@ -61,19 +80,16 @@
             <!-- pemisah content -->
             <v-spacer></v-spacer>
 
-            <v-btn icon v-if="transactionCount">
-                <v-badge color="orange" overlap>
+            <v-btn icon>
+                <v-badge color="orange" overlap v-if="transactions > 0">
                     <template v-slot:badge>
                         <span>
-                            {{ transactionCount }}
+                            {{ transactions }}
                         </span>
                     </template>
                     <v-icon>mdi-cash-multiple</v-icon>
                 </v-badge>
-            </v-btn>
-
-            <v-btn icon v-else>
-                <v-icon>mdi-cash-multiple</v-icon>
+                <v-icon v-else>mdi-cash-multiple</v-icon>
             </v-btn>
 
             <v-text-field
@@ -86,6 +102,7 @@
                 prepend-inner-icon="mdi-magnify"
                 solo-inverted
                 class="mb-4"
+                @click="setDialogComponent('search')"
             >
             </v-text-field>
 
@@ -100,19 +117,16 @@
             <!-- pemisah content -->
             <v-spacer></v-spacer>
 
-            <v-btn icon v-if="transactionCount">
-                <v-badge color="orange" overlap>
+            <v-btn icon>
+                <v-badge color="orange" overlap v-if="transactions > 0">
                     <template v-slot:badge>
                         <span>
-                            {{ transactionCount }}
+                            {{ transactions }}
                         </span>
                     </template>
                     <v-icon>mdi-cash-multiple</v-icon>
                 </v-badge>
-            </v-btn>
-
-            <v-btn icon v-else>
-                <v-icon>mdi-cash-multiple</v-icon>
+                <v-icon v-else>mdi-cash-multiple</v-icon>
             </v-btn>
 
         </v-app-bar>
@@ -141,27 +155,94 @@
 
 <script>
 
-    import store from './store.js'
+    import { mapActions } from 'vuex'
+    import { mapGetters } from 'vuex'
 
     export default {
         name: 'App',
-        store,
+        components: {
+            Alert : () => import('./components/Alert'),
+            Search : () => import('./components/Search'),
+            Login : () => import('./components/Login'),
+            Register : () => import('./components/Register'),
+            Verification : () => import('./components/Verification'),
+            UpdatePassword : () => import('./components/UpdatePassword'),
+        },
         data: () =>  ({
             drawer:false,
             menus: [
                 { title: 'Home', icon: 'mdi-home', route: '/' },
                 { title: 'Campaigns', icon: 'mdi-hand-heart', route: '/campaigns' },
             ],
-            guest: false,
         }),
         computed: {
             isHome() {
                 return (this.$route.path === '/' || this.$route.path === '/home')
             },
-            transactionCount() {
-                return this.$store.getters.transactionCounter
+            ...mapGetters({
+                transactions : 'transaction/transactions',
+                guest : 'auth/guest',
+                user : 'auth/user',
+                dialogStatus: 'dialog/status',
+                currentComponent: 'dialog/component',
+            }),
+            dialog: {
+                get () {
+                    return this.dialogStatus
+                },
+                set (value) {
+                    this.setDialogStatus = value
+                }
             }
-        }
+        },
+        methods: {
+            closeDialog(value) {
+                this.dialog = value
+            },
+
+            handleRegisterd (value) {
+                this.setDialogComponent(value)
+            },
+
+            ...mapActions({
+                setDialogStatus     : 'dialog/setStatus',
+                setDialogComponent  : 'dialog/setComponent',
+                setAuth             : 'auth/set',
+                setAlert            : 'alert/set',
+                checkToken          : 'auth/check_token'
+            }),
+
+            logout () {
+                let config = {
+                    headers: {
+                        'Authorization' : 'Bearer ' + this.user.token,
+                    }
+                }
+
+                axios.post('api/logout/', {}, config)
+                    .then(response => {
+                        this.setAuth({})
+                        this.setAlert({
+                            status: true,
+                            color: 'success',
+                            text : 'Logout Successfully'
+                        })
+                    })
+                    .catch(error => {
+                        let { data } = error.response
+                        this.setAlert({
+                            status: true,
+                            color: 'error',
+                            text: data.message
+                        })
+                    })
+            }
+        },
+        mounted() {
+            if (this.user) {
+                this.checkToken(this.user)
+            }
+        },
     }
 
 </script>

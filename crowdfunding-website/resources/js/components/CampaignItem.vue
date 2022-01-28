@@ -11,9 +11,13 @@
             <v-card-actions>
                 <v-progress-linear
                     v-model="progress"
+                    height="20"
                     color="blue-grey"
-                    height="7"
+                    striped
                 >
+                <template v-slot:default="{ value }">
+                    <strong class="white--text">{{ Math.ceil(value) }}%</strong>
+                </template>
                 </v-progress-linear>
             </v-card-actions>
 
@@ -21,7 +25,7 @@
                 <v-icon>md-cash</v-icon>
                 <span> Rp {{ campaign.collected.toLocaleString('id-ID') }} </span>
                 <v-spacer></v-spacer>
-                <span> {{ progress }}% </span>
+                <span> {{ Math.ceil(progress) }}% </span>
             </v-card-actions>
 
         </v-card>
